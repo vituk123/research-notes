@@ -1,0 +1,181 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Ward-Level Light Validation</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Source+Serif+4:ital,opsz,wght@0,8..60,400;0,8..60,600;1,8..60,400&display=swap">
+<style>
+  :root{
+    --paper:#FFFFFF;
+    --ink:#121212;
+    --ink-2:#55585C;
+    --hair:#CFD2D6;
+    --mark:#26415E;
+    --text:"Source Serif 4",Georgia,"Times New Roman",serif;
+    color-scheme:light;
+  }
+  *{box-sizing:border-box}
+  body{
+    background:var(--paper); color:var(--ink);
+    font-family:var(--text); font-size:17px; line-height:1.58;
+    font-variant-numeric:tabular-nums;
+    margin:0; padding-inline:16px; padding-block:0;
+    -webkit-font-smoothing:antialiased;
+  }
+  .sheet{max-width:640px;margin:0 auto;padding-block:64px 80px}
+
+  /* masthead, set like a paper's title block */
+  .masthead{border-bottom:2px solid var(--ink);padding-bottom:22px}
+  h1{
+    font-size:clamp(25px,4.6vw,33px); font-weight:600; line-height:1.2;
+    letter-spacing:-.011em; margin:0; text-wrap:balance;
+  }
+  .authors{margin:16px 0 0;font-size:16px}
+  .affil{margin:3px 0 0;font-size:14.5px;color:var(--ink-2);line-height:1.5}
+  .affil em{font-style:italic}
+
+  .abstract{
+    margin:26px 0 0; padding-left:22px; border-left:1px solid var(--hair);
+    font-size:16px; color:var(--ink-2);
+  }
+  .abstract p{margin:0}
+  .abstract .lbl{
+    font-weight:600; font-size:13.5px; color:var(--ink);
+    display:block; margin-bottom:5px;
+  }
+
+  h2{
+    font-size:17px; font-weight:600; margin:40px 0 10px;
+    display:flex; gap:12px; align-items:baseline;
+  }
+  h2 .n{color:var(--ink-2);font-weight:400;font-variant-numeric:tabular-nums}
+  p{margin:0 0 14px;max-width:62ch}
+  p:last-child{margin-bottom:0}
+
+  /* exhibit: booktabs rules, no boxes */
+  figure{margin:30px 0 0}
+  .cap{font-size:14.5px;color:var(--ink-2);margin:0 0 14px;line-height:1.5}
+  .cap b{color:var(--ink);font-weight:600}
+
+  .scroll{overflow-x:auto}
+  table{border-collapse:collapse;width:100%;min-width:400px;font-size:15.5px}
+  caption{caption-side:top;text-align:left;font-size:14.5px;color:var(--ink-2);padding-bottom:10px}
+  thead th{
+    font-weight:600; text-align:right; padding:0 0 7px; font-size:14.5px;
+    border-top:1.6px solid var(--ink); padding-top:9px;
+  }
+  thead th:first-child{text-align:left}
+  tbody td{padding:7px 0;text-align:right;border-top:0}
+  tbody td:first-child{text-align:left}
+  tbody tr:first-child td{border-top:.8px solid var(--ink)}
+  tbody tr:last-child td{border-bottom:1.6px solid var(--ink)}
+  th+th,td+td{padding-left:20px}
+  .note{font-size:14px;color:var(--ink-2);margin:11px 0 0;line-height:1.5;max-width:none}
+
+  svg{display:block;max-width:100%;height:auto;min-width:400px}
+
+  footer{
+    margin-top:46px; padding-top:18px; border-top:1px solid var(--hair);
+    font-size:14px; color:var(--ink-2); line-height:1.55;
+  }
+  footer p{margin:0 0 8px;max-width:none}
+  footer p:last-child{margin:0}
+  code{font-family:var(--text);font-style:italic}
+</style>
+</head>
+<body>
+<div class="sheet">
+
+  <header class="masthead">
+    <h1>Does satellite radiance measure the street lighting people actually experience?</h1>
+    <p class="authors">Vitumbiko Kayuni</p>
+    <p class="affil">
+      School of Economics and Finance, University of the Witwatersrand<br>
+      Validation note from <em>The Trade-off Between Perceived Safety and Mental Health: Panel Evidence on Artificial Light at Night from South Africa</em>
+    </p>
+  </header>
+
+  <div class="abstract">
+    <span class="lbl">Abstract</span>
+    <p>Night-time radiance observed from orbit and light experienced by a resident on their street are different quantities. Before using VIIRS radiance as a measure of public lighting in a national panel study, I test it against residents' own reported satisfaction with street lighting across more than 500 Gauteng wards in three rounds of the GCRO Quality of Life survey. The association is positive in every round and strengthens over time. This supports the proxy and gives a basis for judging how far attenuation bias is likely to pull the main district-level estimates toward zero.</p>
+  </div>
+
+  <h2><span class="n">1</span> Motivation</h2>
+  <p>My research measures exposure to artificial light at night using NASA Black Marble VIIRS composites at roughly 500 m resolution. The instrument records light directed upward or scattered from surfaces. A resident experiences something narrower: whether the lamp on their corner is working.</p>
+  <p>If those two quantities are only weakly related, every downstream estimate is measuring something other than public lighting, and no amount of care in the panel specification repairs that. The question belongs at the start of the analysis rather than in a robustness appendix.</p>
+
+  <h2><span class="n">2</span> Data and method</h2>
+  <p>Exposure is ward mean VIIRS radiance, extracted by zonal statistics over Municipal Demarcation Board ward polygons. The reference measure is resident-reported satisfaction with street lighting, taken from the Gauteng City-Region Observatory Quality of Life survey, which carries public ward identifiers. I compute survey-weighted correlations separately within each round rather than pooling, so that a change in the relationship over time remains visible.</p>
+
+  <figure>
+    <div class="scroll">
+      <table>
+        <caption>Table 1. Ward radiance against reported street-lighting satisfaction, Gauteng</caption>
+        <thead>
+          <tr><th>Survey round</th><th>Fieldwork</th><th>Respondents</th><th>Weighted correlation</th></tr>
+        </thead>
+        <tbody>
+          <tr><td>Quality of Life IV</td><td>2015/16</td><td>30,002</td><td>0.23</td></tr>
+          <tr><td>Quality of Life V</td><td>2017/18</td><td>24,889</td><td>0.26</td></tr>
+          <tr><td>Quality of Life</td><td>2020/21</td><td>13,616</td><td>0.52</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <p class="note">Correlations are survey-weighted and computed within round across more than 500 wards. All three are positive.</p>
+  </figure>
+
+  <figure>
+    <p class="cap"><b>Figure 1.</b> The association holds in every round and roughly doubles by 2020/21.</p>
+    <div class="scroll">
+      <svg viewBox="0 0 600 212" role="img" aria-label="Dot plot of weighted correlations between ward radiance and street-lighting satisfaction: Quality of Life IV 2015/16, 0.23; Quality of Life V 2017/18, 0.26; Quality of Life 2020/21, 0.52, on an axis from 0 to 0.6.">
+        <line x1="130" y1="26" x2="130" y2="150" stroke="#CFD2D6" stroke-width="1"/>
+
+        <text x="118" y="40" text-anchor="end" font-family="Source Serif 4, Georgia, serif" font-size="14" fill="#121212">QoL IV</text>
+        <text x="118" y="56" text-anchor="end" font-family="Source Serif 4, Georgia, serif" font-size="12.5" fill="#55585C">2015/16</text>
+        <line x1="130" y1="44" x2="287" y2="44" stroke="#CFD2D6" stroke-width="1"/>
+        <circle cx="287" cy="44" r="5" fill="#26415E"/>
+        <text x="301" y="49" font-family="Source Serif 4, Georgia, serif" font-size="14.5" fill="#121212">0.23</text>
+
+        <text x="118" y="84" text-anchor="end" font-family="Source Serif 4, Georgia, serif" font-size="14" fill="#121212">QoL V</text>
+        <text x="118" y="100" text-anchor="end" font-family="Source Serif 4, Georgia, serif" font-size="12.5" fill="#55585C">2017/18</text>
+        <line x1="130" y1="88" x2="308" y2="88" stroke="#CFD2D6" stroke-width="1"/>
+        <circle cx="308" cy="88" r="5" fill="#26415E"/>
+        <text x="322" y="93" font-family="Source Serif 4, Georgia, serif" font-size="14.5" fill="#121212">0.26</text>
+
+        <text x="118" y="128" text-anchor="end" font-family="Source Serif 4, Georgia, serif" font-size="14" fill="#121212">QoL</text>
+        <text x="118" y="144" text-anchor="end" font-family="Source Serif 4, Georgia, serif" font-size="12.5" fill="#55585C">2020/21</text>
+        <line x1="130" y1="132" x2="485" y2="132" stroke="#CFD2D6" stroke-width="1"/>
+        <circle cx="485" cy="132" r="5" fill="#26415E"/>
+        <text x="499" y="137" font-family="Source Serif 4, Georgia, serif" font-size="14.5" fill="#121212">0.52</text>
+
+        <line x1="130" y1="162" x2="540" y2="162" stroke="#121212" stroke-width="1"/>
+        <line x1="130" y1="162" x2="130" y2="167" stroke="#121212" stroke-width="1"/>
+        <line x1="267" y1="162" x2="267" y2="167" stroke="#121212" stroke-width="1"/>
+        <line x1="403" y1="162" x2="403" y2="167" stroke="#121212" stroke-width="1"/>
+        <line x1="540" y1="162" x2="540" y2="167" stroke="#121212" stroke-width="1"/>
+        <text x="130" y="183" text-anchor="middle" font-family="Source Serif 4, Georgia, serif" font-size="13" fill="#55585C">0</text>
+        <text x="267" y="183" text-anchor="middle" font-family="Source Serif 4, Georgia, serif" font-size="13" fill="#55585C">0.2</text>
+        <text x="403" y="183" text-anchor="middle" font-family="Source Serif 4, Georgia, serif" font-size="13" fill="#55585C">0.4</text>
+        <text x="540" y="183" text-anchor="middle" font-family="Source Serif 4, Georgia, serif" font-size="13" fill="#55585C">0.6</text>
+        <text x="335" y="205" text-anchor="middle" font-family="Source Serif 4, Georgia, serif" font-size="13.5" fill="#55585C">Survey-weighted correlation coefficient</text>
+      </svg>
+    </div>
+  </figure>
+
+  <h2><span class="n">3</span> What this means for the main estimates</h2>
+  <p>A positive and consistent association supports treating satellite radiance as a stand-in for ground-level public lighting. It also does something more useful than passing a check. Classical measurement error attenuates coefficients toward zero, so knowing how closely radiance tracks lived experience at ward level gives a basis for judging how far the coarser district-level estimates are likely to understate the true relationship.</p>
+  <p>That mattered more than I anticipated. A separate diagnostic showed within-district variation accounts for under one percent of total variation in transformed radiance, which means the district panel is identified off very little movement. This ward-level work is part of the response: finer geography where the data supports it, and within-district radiance dispersion rather than the mean as a second exposure measure, on the reasoning that failing municipal lighting shows up as unevenness.</p>
+  <p>The strengthening across rounds is consistent with the later surveys coinciding with wider variation in whether municipal lighting works at all, though the design here cannot establish that.</p>
+
+  <h2><span class="n">4</span> Limitations</h2>
+  <p>These are weighted associations across wards, not within them, and a correlation does not validate a causal design. Satisfaction is self-reported and may respond to neighbourhood conditions other than lighting, so some of the association is likely picking up a broader service-delivery signal. Ward boundaries are also coarse relative to the lamp on a street. The exercise answers one narrow question, whether the exposure variable measures the thing it claims to, and should not be read as answering more.</p>
+
+  <footer>
+    <p>Produced in R using <code>sf</code>, <code>terra</code>, <code>fixest</code> and the tidyverse, as part of a version-controlled pipeline that regenerates every table and figure from raw NIDS, VIIRS, GCRO and VOCS inputs.</p>
+    <p>Prepared as a work sample. The research report is in progress and the headline estimates are not final.</p>
+  </footer>
+
+</div>
+</body>
+</html>
